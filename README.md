@@ -1,0 +1,1 @@
+Extract all resource from a text
