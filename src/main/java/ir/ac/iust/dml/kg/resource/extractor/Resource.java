@@ -15,12 +15,23 @@ public class Resource {
     private final Set<String> variantLabel = new HashSet<>();
     private final Set<String> disambiguatedFrom = new HashSet<>();
 
-    public Resource() {
+    /**
+     * Copy constructor
+     */
+    public Resource(Resource copy) {
+        this.iri = copy.iri;
+        this.type = copy.type;
+        this.instanceOf = copy.instanceOf;
+        this.classTree.addAll(copy.classTree);
+        this.label = copy.label;
+        this.variantLabel.addAll(copy.variantLabel);
+        this.disambiguatedFrom.addAll(copy.disambiguatedFrom);
     }
 
     public Resource(String iri) {
         this.iri = iri;
     }
+
 
     @Override
     public boolean equals(Object o) {
@@ -89,6 +100,6 @@ public class Resource {
 
     @Override
     public String toString() {
-        return String.format("%s type:%s label:%s", iri, type, label);
+        return String.format("%s(%s)", type, iri);
     }
 }

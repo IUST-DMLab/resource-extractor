@@ -59,6 +59,23 @@ public class TreeResourceExtractor implements IResourceExtractor {
 
     @Override
     public List<MatchedResource> search(String text, Boolean removeSubset) {
-        return null;
+        if (root == null) return null;
+        final String[] words = text.split("\\s", -1);
+        final List<Candidate> candidates = new ArrayList<>();
+        for (int i = 0; i < words.length; i++) {
+            final String word = words[i];
+            candidates.add(new Candidate(i, root));
+            candidates.forEach(c -> c.extend(word));
+        }
+        final List<MatchedResource> resources = new ArrayList<>();
+        candidates.forEach(c -> {
+            final List<MatchedResource> newResources = c.createResource(removeSubset);
+            newResources.forEach(n -> {
+                if (removeSubset && resources.size() > 0 && n.getEnd() == resources.get(resources.size() - 1).getEnd())
+                    return;
+                resources.add(n);
+            });
+        });
+        return resources;
     }
 }

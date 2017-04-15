@@ -32,7 +32,7 @@ class TreeNode {
         else {
             final String urn = path[position];
             TreeNode current = childs.computeIfAbsent(urn, k -> new TreeNode());
-            current.add(resource, path, position + 1);
+            current.addAmbiguity(resource, path, position + 1);
         }
     }
 
@@ -42,5 +42,9 @@ class TreeNode {
 
     public Set<Resource> getAmbiguities() {
         return ambiguities;
+    }
+
+    TreeNode extend(String word) {
+        return childs.get(word);
     }
 }

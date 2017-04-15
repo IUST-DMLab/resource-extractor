@@ -16,5 +16,6 @@ public class MainTest {
         try (IResourceReader reader = new ResourceReaderFromKGStoreV1Service("http://localhost:8091/")) {
             extractor.setup(reader, 1000);
         }
+        extractor.search(" قانون اساسی ایران ماگدبورگ", true).forEach(System.out::println);
     }
 }
