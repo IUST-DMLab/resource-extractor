@@ -32,3 +32,28 @@ class Test {
     }
 }
 ```
+
+## Cache entity readers
+For cache any reader use this `ResourceCache`
+
+```java
+class Test {
+    void sample() {
+        final ResourceCache cache = new ResourceCache("dir/to/be/saved");
+        try (IResourceReader reader = new ResourceReaderFromKGStoreV1Service("http://194.225.227.161:8091/")) {
+            cache.cache(reader, 10000);
+        }
+    }
+}
+```
+
+And you can use `ResourceCache` like other reader
+```java
+class Test {
+    void sample() {
+        try (IResourceReader reader = new ResourceCache("dir/to/be/saved")) {
+            extractor.setup(reader, 1000);
+        }
+    }
+}
+```

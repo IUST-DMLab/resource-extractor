@@ -1,12 +1,13 @@
 package ir.ac.iust.dml.kg.resource.extractor;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
  * Resource Data class
  */
-public class Resource {
+public class Resource implements Serializable {
     private String iri;
     private ResourceType type;
     private String instanceOf;
