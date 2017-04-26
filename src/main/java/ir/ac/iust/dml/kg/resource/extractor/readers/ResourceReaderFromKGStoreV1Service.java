@@ -86,8 +86,11 @@ public class ResourceReaderFromKGStoreV1Service implements IResourceReader {
                 }
             }
             lastPage++;
-            if (lastPage > result.pageCount)
+            if (lastPage > result.pageCount) {
+                if (last != null && last.hasData())
+                    resources.add(last);
                 lastPage = -1; //do not continue
+            }
         }
         return resources;
     }
