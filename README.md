@@ -33,6 +33,19 @@ class Test {
 }
 ```
 
+* `ResourceReaderFromVirtuoso` read entity from virtuoso, 
+
+```java
+class Test {
+    void sample() {
+         final ResourceCache cache = new ResourceCache("h:\\test");
+                try (IResourceReader reader = new ResourceReaderFromVirtuoso("194.225.227.161" , "1111",
+                        "dba", "dba", "http://localhost:8890/knowledgeGraphV2")) {
+                    cache.cache(reader, 100000);
+                }
+    }
+}
+```
 ## Cache entity readers
 For cache any reader use this `ResourceCache`
 
