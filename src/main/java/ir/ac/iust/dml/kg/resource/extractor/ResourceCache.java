@@ -23,7 +23,6 @@ public class ResourceCache implements IResourceReader {
 
     public ResourceCache(String path) throws IOException {
         this.path = Paths.get(path);
-        Clear();
     }
 
     /**
