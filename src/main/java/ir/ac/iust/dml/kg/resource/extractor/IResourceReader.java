@@ -18,7 +18,7 @@ public interface IResourceReader extends AutoCloseable {
      * @return list of resources
      * @throws IOException
      */
-    List<Resource> read(int pageSize) throws IOException;
+    List<Resource> read(int pageSize) throws Exception;
 
     Boolean isFinished();
 }

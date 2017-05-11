@@ -1,4 +1,5 @@
-* 1.1.0
-    - Add Resource cacher
 * 1.2.0
     - Add ResourceReaderFromVirtuoso to read from virtuoso
+    - Make resource cache reader paraller
+* 1.1.0
+    - Add Resource cache
