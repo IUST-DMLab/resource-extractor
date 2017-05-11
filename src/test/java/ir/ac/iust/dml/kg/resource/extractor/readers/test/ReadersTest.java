@@ -1,9 +1,11 @@
 package ir.ac.iust.dml.kg.resource.extractor.readers.test;
 
+import ir.ac.iust.dml.kg.resource.extractor.IResourceExtractor;
 import ir.ac.iust.dml.kg.resource.extractor.IResourceReader;
 import ir.ac.iust.dml.kg.resource.extractor.ResourceCache;
 import ir.ac.iust.dml.kg.resource.extractor.readers.ResourceReaderFromKGStoreV1Service;
 import ir.ac.iust.dml.kg.resource.extractor.readers.ResourceReaderFromVirtuoso;
+import ir.ac.iust.dml.kg.resource.extractor.tree.TreeResourceExtractor;
 import org.junit.Test;
 
 /**
@@ -27,4 +29,16 @@ public class ReadersTest {
             cache.cache(reader, 100000);
         }
     }
+
+    @Test
+    public void cacheTest() throws Exception {
+        long t1 = System.currentTimeMillis();
+        IResourceExtractor extractor = new TreeResourceExtractor();
+        try (IResourceReader reader = new ResourceCache("C:\\Users\\HosseiN\\Downloads\\Telegram Desktop\\cache_20170506.tar\\cache_20170506\\cache")) {
+            extractor.setup(reader, 1000);
+        }
+        System.out.println("" + (System.currentTimeMillis() - t1));
+        extractor.search(" قانون اساسی ایران ماگدبورگ", true).forEach(System.out::println);
+    }
+
 }

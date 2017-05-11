@@ -10,6 +10,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * Cache iReaders to a directory to read it again
@@ -20,6 +24,8 @@ public class ResourceCache implements IResourceReader {
     private final Path path;
     private int writeIndex = 0;
     private int readIndex = 0;
+    private final ExecutorService readExecutor = Executors.newFixedThreadPool(8);
+    private final List<Future<List<Resource>>> ingoingReading = new ArrayList<>();
 
     public ResourceCache(String path) throws IOException {
         this.path = Paths.get(path);
@@ -43,7 +49,7 @@ public class ResourceCache implements IResourceReader {
         LOGGER.info("Cache directory is: " + path.toAbsolutePath().toString());
     }
 
-    public void cache(IResourceReader reader, int pageSize) throws IOException {
+    public void cache(IResourceReader reader, int pageSize) throws Exception {
         while (!reader.isFinished()) {
             final List<Resource> resources = reader.read(pageSize);
             if (resources.isEmpty()) continue;
@@ -72,26 +78,42 @@ public class ResourceCache implements IResourceReader {
 
 
     @Override
-    public List<Resource> read(int pageSize) throws IOException {
-        final Path path = getNextReadPath();
-        if (Files.exists(path))
-            try (InputStream in = Files.newInputStream(path)) {
-                try (ObjectInputStream ois = new ObjectInputStream(in)) {
-                    return (List<Resource>) ois.readObject();
-
-                } catch (ClassNotFoundException e) {
-                }
+    public List<Resource> read(int pageSize) throws Exception {
+        if (readIndex == 0) //Start to queue all request
+            while (true) {
+                final Path path = getNextReadPath();
+                if (!Files.exists(path)) break;
+                ingoingReading.add(readExecutor.submit(new Callable<List<Resource>>() {
+                    @Override
+                    public List<Resource> call() throws Exception {
+                        try (InputStream in = Files.newInputStream(path)) {
+                            try (ObjectInputStream ois = new ObjectInputStream(in)) {
+                                return (List<Resource>) ois.readObject();
+                            } catch (ClassNotFoundException e) {
+                            }
+                        }
+                        return null;
+                    }
+                }));
             }
+        if (ingoingReading.size() > 0) {
+            final Future<List<Resource>> first = ingoingReading.get(0);
+            if (first.isDone()) {
+                ingoingReading.remove(0);
+                return first.get();
+            } else
+                Thread.sleep(100);
+        }
         return new ArrayList<>();
     }
 
     @Override
     public Boolean isFinished() {
-        return !Files.exists(getCurrentReadPath());
+        return !Files.exists(getCurrentReadPath()) && ingoingReading.isEmpty();
     }
 
     @Override
     public void close() throws Exception {
-
+        readExecutor.shutdown();
     }
 }

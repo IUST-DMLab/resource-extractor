@@ -7,7 +7,6 @@ import ir.ac.iust.dml.kg.resource.extractor.Resource;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
-import java.io.IOException;
 import java.util.*;
 
 /**
@@ -19,7 +18,7 @@ public class TreeResourceExtractor implements IResourceExtractor {
     static final Logger LOGGER = LogManager.getLogger(TreeResourceExtractor.class);
 
     @Override
-    public void setup(IResourceReader reader, int pageSize) throws IOException {
+    public void setup(IResourceReader reader, int pageSize) throws Exception {
         LOGGER.info("Start create index");
         while (!reader.isFinished()) {
             final List<Resource> resources = reader.read(pageSize);
