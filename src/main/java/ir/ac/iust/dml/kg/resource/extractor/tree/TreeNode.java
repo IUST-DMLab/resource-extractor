@@ -15,7 +15,7 @@ class TreeNode {
     void add(Resource resource, String[] path, int position) {
         if (position == path.length) {
             if (this.resource != null && !this.resource.equals(resource)) {
-                System.err.printf("Conflict on %s: %s with new %s\n", Arrays.toString(path), this.resource, resource);
+                TreeResourceExtractor.LOGGER.warn(String.format("Conflict on %s: %s with new %s\n", Arrays.toString(path), this.resource, resource));
                 return;
             }
             this.resource = resource;
