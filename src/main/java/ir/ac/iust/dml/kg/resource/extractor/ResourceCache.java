@@ -3,6 +3,8 @@ package ir.ac.iust.dml.kg.resource.extractor;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.nustaq.serialization.FSTObjectInput;
+import org.nustaq.serialization.FSTObjectOutput;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -10,7 +12,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -22,13 +23,19 @@ import java.util.concurrent.Future;
 public class ResourceCache implements IResourceReader {
     private final static Logger LOGGER = Logger.getLogger(ResourceCache.class);
     private final Path path;
+    private final boolean useFSTCache;
     private int writeIndex = 0;
     private int readIndex = 0;
     private final ExecutorService readExecutor = Executors.newFixedThreadPool(8);
     private final List<Future<List<Resource>>> ingoingReading = new ArrayList<>();
 
-    public ResourceCache(String path) throws IOException {
+    public ResourceCache(String path, boolean useFSTCache) throws IOException {
         this.path = Paths.get(path);
+        this.useFSTCache = useFSTCache;
+    }
+
+    public ResourceCache(String path) throws IOException {
+        this(path, false);
     }
 
     /**
@@ -55,7 +62,7 @@ public class ResourceCache implements IResourceReader {
             if (resources.isEmpty()) continue;
             // write object to file
             try (OutputStream fos = Files.newOutputStream(getNextWritePath())) {
-                try (ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+                try (ObjectOutput oos = useFSTCache ? new FSTObjectOutput(fos) : new ObjectOutputStream(fos)) {
                     oos.writeObject(resources);
                     oos.close();
                 }
@@ -83,17 +90,14 @@ public class ResourceCache implements IResourceReader {
             while (true) {
                 final Path path = getNextReadPath();
                 if (!Files.exists(path)) break;
-                ingoingReading.add(readExecutor.submit(new Callable<List<Resource>>() {
-                    @Override
-                    public List<Resource> call() throws Exception {
-                        try (InputStream in = Files.newInputStream(path)) {
-                            try (ObjectInputStream ois = new ObjectInputStream(in)) {
-                                return (List<Resource>) ois.readObject();
-                            } catch (ClassNotFoundException e) {
-                            }
+                ingoingReading.add(readExecutor.submit(() -> {
+                    try (InputStream in = Files.newInputStream(path)) {
+                        try (ObjectInput ois = useFSTCache ? new FSTObjectInput(in) : new ObjectInputStream(in)) {
+                            return (List<Resource>) ois.readObject();
+                        } catch (ClassNotFoundException ignored) {
                         }
-                        return null;
                     }
+                    return null;
                 }));
             }
         if (ingoingReading.size() > 0) {
@@ -102,7 +106,7 @@ public class ResourceCache implements IResourceReader {
                 ingoingReading.remove(0);
                 return first.get();
             } else
-                Thread.sleep(100);
+                Thread.sleep(10);
         }
         return new ArrayList<>();
     }
