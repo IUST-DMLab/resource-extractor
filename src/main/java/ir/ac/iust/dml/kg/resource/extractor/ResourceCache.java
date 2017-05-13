@@ -83,7 +83,6 @@ public class ResourceCache implements IResourceReader {
         return path.resolve(String.format("%06d", readIndex));
     }
 
-
     @Override
     public List<Resource> read(int pageSize) throws Exception {
         if (readIndex == 0) //Start to queue all request
