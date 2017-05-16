@@ -49,6 +49,7 @@ public class ResourceReaderFromVirtuoso implements IResourceReader {
                 last = new Resource(subject);
             }
             switch (predicate) {
+                case "http://www.w3.org/1999/02/22-rdf-syntax-ns#type":
                 case "https://www.w3.org/1999/02/22-rdf-syntax-ns#type":
                     switch (value) {
                         case "http://www.w3.org/2000/01/rdf-schema#Resource":
@@ -56,6 +57,7 @@ public class ResourceReaderFromVirtuoso implements IResourceReader {
                             break;
                         case "http://www.w3.org/2002/07/owl#DatatypeProperty":
                         case "https://www.w3.org/1999/02/22-rdf-syntax-ns#Property":
+                        case "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property":
                             last.setType(ResourceType.Property);
                             break;
                         default:
@@ -63,6 +65,7 @@ public class ResourceReaderFromVirtuoso implements IResourceReader {
                             break;
                     }
                     break;
+                case "http://www.w3.org/1999/02/22-rdf-syntax-ns#instanceOf":
                 case "https://www.w3.org/1999/02/22-rdf-syntax-ns#instanceOf":
                     // TODO not standard URL
                 case "http://fkg.iust.ac.ir/ontology/instanceOf":
