@@ -46,6 +46,8 @@ public class TreeResourceExtractor implements IResourceExtractor {
                         old.setInstanceOf(r.getInstanceOf());
                     if (r.getType() != null)
                         old.setType(r.getType());
+                    if (!r.getClassTree().isEmpty())
+                        old.getClassTree().addAll(r.getClassTree());
                     old.getVariantLabel().addAll(newLabels);
                     old.getDisambiguatedFrom().addAll(newAmbiguities);
                 }

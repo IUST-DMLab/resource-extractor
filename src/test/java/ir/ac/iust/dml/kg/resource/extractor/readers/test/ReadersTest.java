@@ -25,7 +25,7 @@ public class ReadersTest {
     public void testVirtuosoReader() throws Exception {
         final ResourceCache cache = new ResourceCache("h:\\test2", true);
         try (IResourceReader reader = new ResourceReaderFromVirtuoso("194.225.227.161", "1111",
-                "dba", "fkgVIRTUOSO2017", "http://localhost:8890/knowledgeGraphV2")) {
+                "dba", "fkgVIRTUOSO2017", "http://fkg.iust.ac.ir/")) {
             cache.cache(reader, 10000);
         }
     }
@@ -34,7 +34,7 @@ public class ReadersTest {
     public void cacheTest() throws Exception {
         long t1 = System.currentTimeMillis();
         IResourceExtractor extractor = new TreeResourceExtractor();
-        try (IResourceReader reader = new ResourceCache("H:\\fst-cache", true)) {
+        try (IResourceReader reader = new ResourceCache("C:\\Users\\HosseiN\\Downloads\\Telegram Desktop\\cache", true)) {
             extractor.setup(reader, 1000);
         }
         System.out.println("" + (System.currentTimeMillis() - t1));
