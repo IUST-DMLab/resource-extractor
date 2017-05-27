@@ -53,13 +53,17 @@ public class ResourceReaderFromKGStoreV1Service implements IResourceReader {
                     last = new Resource(d.subject);
                 }
                 switch (d.predicate) {
+                  case "http://www.w3.org/1999/02/22-rdf-syntax-ns#type":
                     case "https://www.w3.org/1999/02/22-rdf-syntax-ns#type":
                         switch (d.object.value) {
                             case "http://www.w3.org/2000/01/rdf-schema#Resource":
+                          case "http://www.w3.org/2002/07/owl#NamedIndividual":
                                 last.setType(ResourceType.Entity);
                                 break;
-                            //case "http://www.w3.org/2002/07/owl#DatatypeProperty":
+                          case "http://www.w3.org/2002/07/owl#DatatypeProperty":
+                          case "http://www.w3.org/2002/07/owl#ObjectProperty":
                             case "https://www.w3.org/1999/02/22-rdf-syntax-ns#Property":
+                          case "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property":
                                 last.setType(ResourceType.Property);
                                 break;
                             default:
@@ -68,6 +72,7 @@ public class ResourceReaderFromKGStoreV1Service implements IResourceReader {
                         }
                         break;
                     case "https://www.w3.org/1999/02/22-rdf-syntax-ns#instanceOf":
+                  case "http://www.w3.org/1999/02/22-rdf-syntax-ns#instanceOf":
                         last.setInstanceOf(d.object.value);
                         break;
                     case "http://www.w3.org/2000/01/rdf-schema#label":

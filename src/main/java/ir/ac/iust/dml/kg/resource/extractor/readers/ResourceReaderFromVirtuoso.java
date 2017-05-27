@@ -53,9 +53,11 @@ public class ResourceReaderFromVirtuoso implements IResourceReader {
                 case "https://www.w3.org/1999/02/22-rdf-syntax-ns#type":
                     switch (value) {
                         case "http://www.w3.org/2000/01/rdf-schema#Resource":
+                        case "http://www.w3.org/2002/07/owl#NamedIndividual":
                             last.setType(ResourceType.Entity);
                             break;
                         case "http://www.w3.org/2002/07/owl#DatatypeProperty":
+                        case "http://www.w3.org/2002/07/owl#ObjectProperty":
                         case "https://www.w3.org/1999/02/22-rdf-syntax-ns#Property":
                         case "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property":
                             last.setType(ResourceType.Property);
