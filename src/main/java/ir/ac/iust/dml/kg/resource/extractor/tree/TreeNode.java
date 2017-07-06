@@ -2,7 +2,10 @@ package ir.ac.iust.dml.kg.resource.extractor.tree;
 
 import ir.ac.iust.dml.kg.resource.extractor.Resource;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * A node of tree
@@ -14,25 +17,18 @@ class TreeNode {
 
     void add(Resource resource, String[] path, int position) {
         if (position == path.length) {
-            if (this.resource != null && !this.resource.equals(resource)) {
-                TreeResourceExtractor.LOGGER.warn(String.format("Conflict on %s: %s with new %s\n", Arrays.toString(path), this.resource, resource));
-                return;
-            }
-            this.resource = resource;
+            if (this.resource == null || this.resource.equals(resource))
+                this.resource = resource;
+            else if (this.resource != null) {
+                ambiguities.add(resource);
+                ambiguities.add(this.resource);
+                this.resource = null;
+            } else
+                ambiguities.add(resource);
         } else {
             final String urn = path[position];
             TreeNode current = childs.computeIfAbsent(urn, k -> new TreeNode());
             current.add(resource, path, position + 1);
-        }
-    }
-
-    void addAmbiguity(Resource resource, String[] path, int position) {
-        if (position == path.length)
-            this.ambiguities.add(resource);
-        else {
-            final String urn = path[position];
-            TreeNode current = childs.computeIfAbsent(urn, k -> new TreeNode());
-            current.addAmbiguity(resource, path, position + 1);
         }
     }
 

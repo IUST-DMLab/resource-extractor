@@ -80,11 +80,9 @@ public class ResourceReaderFromKGStoreV1Service implements IResourceReader {
                         last.getVariantLabel().add(d.object.value);
                         break;
                     case "http://fkg.iust.ac.ir/ontology/variantLabel":
-                        last.getVariantLabel().add(d.object.value);
-                        break;
                     case "http://dbpedia.org/ontology/wikiDisambiguatedFrom":
                     case "http://fkg.iust.ac.ir/ontology/wikiDisambiguatedFrom":
-                        last.getDisambiguatedFrom().add(d.object.value);
+                        last.getVariantLabel().add(d.object.value);
                         break;
                     case "http://www.w3.org/2000/01/rdf-schema#domain":
                         last.getClassTree().add(d.object.value);
