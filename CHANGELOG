@@ -2,6 +2,7 @@
     - Do not use ambiguities and compute it from label
     - Add ILabelConverter
     - Add getResourceByIRI to resource extractor
+    - Add subsetOf
 
 * 1.2.0
     - Add ResourceReaderFromVirtuoso to read from virtuoso

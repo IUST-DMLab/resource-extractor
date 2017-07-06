@@ -11,9 +11,21 @@ import java.util.Set;
  * A node of tree
  */
 class TreeNode {
+    private String path;
     private Resource resource;
     private final Set<Resource> ambiguities = new HashSet<>();
     private final Map<String, TreeNode> childs = new HashMap<>();
+
+    public TreeNode() {
+        path = "/";
+    }
+
+    TreeNode(String[] path, int length) {
+        final StringBuilder p = new StringBuilder();
+        for (int i = 0; i <= length; i++)
+            p.append(path[i]).append(' ');
+        this.path = p.toString();
+    }
 
     void add(Resource resource, String[] path, int position) {
         if (position == path.length) {
@@ -27,7 +39,7 @@ class TreeNode {
                 ambiguities.add(resource);
         } else {
             final String urn = path[position];
-            TreeNode current = childs.computeIfAbsent(urn, k -> new TreeNode());
+            TreeNode current = childs.computeIfAbsent(urn, k -> new TreeNode(path, position));
             current.add(resource, path, position + 1);
         }
     }
@@ -42,5 +54,10 @@ class TreeNode {
 
     TreeNode extend(String word) {
         return childs.get(word);
+    }
+
+    @Override
+    public String toString() {
+        return path;
     }
 }

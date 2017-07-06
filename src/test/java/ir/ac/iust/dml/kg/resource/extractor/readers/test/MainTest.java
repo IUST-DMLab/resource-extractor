@@ -57,10 +57,8 @@ public class MainTest {
             public List<Resource> read(int pageSize) throws Exception {
                 finished = true;
                 final List<Resource> r = new ArrayList<>();
-                r.add(new Resource("http://hossein", "حسین", "حسین خادمی", "حسین خالدی"));
-                r.add(new Resource("http://hossein2", "حسین", "حسین احمدی"));
-                r.add(new Resource("http://khaledi", "خادمی خالدی"));
-                r.add(new Resource("http://majid", "مجید", "مجید عسگری"));
+                r.add(new Resource("http://hossein", "حسین", "محمد حسین", "حسین خادمی خالدی"));
+                r.add(new Resource("http://hossein2", "حسین خادمی", "حسین خادمی خالدی"));
                 return r;
             }
 
@@ -74,7 +72,7 @@ public class MainTest {
 
             }
         }, 0);
-        final List<MatchedResource> x = re.search("حسین خادمی خالدی و مجید", false);
+        final List<MatchedResource> x = re.search("محمد حسین خادمی خالدی", false);
         x.forEach(System.out::println);
     }
 
