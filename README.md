@@ -62,11 +62,32 @@ class Test {
 ```
 
 And you can use `ResourceCache` like other reader
+
 ```java
 class Test {
     void sample() {
         try (IResourceReader reader = new ResourceCache("dir/to/be/saved", true)) {
             extractor.setup(reader, 1000);
+        }
+    }
+}
+```
+
+# Convert label
+If you want to change label must pass `ILabelConverter` to setup method of resource extractor
+for example for remove parentheses use this sample
+
+```java
+class Test {
+    void sample() {
+        IResourceExtractor extractor = new TreeResourceExtractor();
+        try (IResourceReader reader = new ResourceReaderFromKGStoreV1Service("http://localhost:8091/")) {
+            extractor.setup(reader, label -> {
+                final HashSet<String> newLabels = new HashSet<>();
+                newLabels.add(label);
+                newLabels.add(label.replaceAll("\\(.*\\)", "").trim());
+                return newLabels;
+            }, 1000);
         }
     }
 }
