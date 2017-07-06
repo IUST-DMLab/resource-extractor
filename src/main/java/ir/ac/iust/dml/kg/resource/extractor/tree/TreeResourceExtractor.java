@@ -79,4 +79,9 @@ public class TreeResourceExtractor implements IResourceExtractor {
         });
         return resources;
     }
+
+    @Override
+    public Resource getResourceByIRI(String iri) {
+        return allResource.get(iri);
+    }
 }

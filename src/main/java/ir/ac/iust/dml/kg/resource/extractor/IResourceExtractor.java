@@ -11,4 +11,6 @@ public interface IResourceExtractor {
     void setup(IResourceReader reader, ILabelConverter converter, int pageSize) throws Exception;
 
     List<MatchedResource> search(String text, Boolean removeSubset);
+
+    Resource getResourceByIRI(String iri);
 }
