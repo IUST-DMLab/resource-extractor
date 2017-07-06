@@ -42,7 +42,8 @@ public class Candidate {
             final Resource resource = path.get(j).getResource();
             final Set<Resource> ambiguities = path.get(j).getAmbiguities();
             if (resource != null || !ambiguities.isEmpty()) {
-                result.add(new MatchedResource(start, start + j - 1, resource, ambiguities));
+                final MatchedResource m = new MatchedResource(start, start + j - 1, resource, ambiguities);
+                result.add(m);
                 if (removeSubset)
                     break;
             }

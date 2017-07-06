@@ -69,14 +69,21 @@ public class TreeResourceExtractor implements IResourceExtractor {
             candidates.forEach(c -> c.extend(word));
         }
         final List<MatchedResource> resources = new ArrayList<>();
-        candidates.forEach(c -> {
+        MatchedResource currentBestMatch = null;
+        for (Candidate c : candidates) {
             final List<MatchedResource> newResources = c.createResource(removeSubset);
-            newResources.forEach(n -> {
-                if (removeSubset && resources.size() > 0 && n.getEnd() == resources.get(resources.size() - 1).getEnd())
-                    return;
-                resources.add(n);
-            });
-        });
+            for (MatchedResource n : newResources) {
+                if (currentBestMatch != null && n.getEnd() <= currentBestMatch.getEnd()) {
+                    if (!removeSubset) {
+                        n.setSubsetOf(currentBestMatch);
+                        resources.add(n);
+                    }
+                } else {
+                    resources.add(n);
+                    currentBestMatch = n;
+                }
+            }
+        }
         return resources;
     }
 

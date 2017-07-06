@@ -11,6 +11,7 @@ public class MatchedResource {
     private final int end;
     private final Resource resource;
     private final Set<Resource> ambiguities;
+    private MatchedResource subsetOf;
 
     public MatchedResource(int start, int end, Resource resource, Set<Resource> ambiguities) {
         this.start = start;
@@ -37,12 +38,26 @@ public class MatchedResource {
         return ambiguities;
     }
 
+    public MatchedResource getSubsetOf() {
+        return subsetOf;
+    }
+
+    public void setSubsetOf(MatchedResource subsetOf) {
+        this.subsetOf = subsetOf;
+    }
+
     @Override
     public String toString() {
         final StringBuilder str = new StringBuilder();
         if (ambiguities != null && !ambiguities.isEmpty())
             ambiguities.forEach(a -> str.append(String.format("or(%s)", a)));
-        return String.format("[%d %d] %s \t %s", start, end, resource, str);
+        if (subsetOf != null && ambiguities != null && !ambiguities.isEmpty())
+            return String.format("[%d %d] %s < (%s)", start, end, str, subsetOf);
+        if (subsetOf != null)
+            return String.format("[%d %d] %s < (%s)", start, end, resource, subsetOf);
+        if (ambiguities != null && !ambiguities.isEmpty())
+            return String.format("[%d %d] %s", start, end, str);
+        return String.format("[%d %d] %s", start, end, resource);
 
     }
 }
