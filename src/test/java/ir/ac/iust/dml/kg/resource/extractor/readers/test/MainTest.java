@@ -6,6 +6,7 @@ import ir.ac.iust.dml.kg.resource.extractor.tree.TreeResourceExtractor;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
@@ -74,6 +75,39 @@ public class MainTest {
             }
         }, 0);
         final List<MatchedResource> x = re.search("حسین خادمی خالدی و مجید", false);
+        x.forEach(System.out::println);
+    }
+
+    @Test
+    public void labelConverter() throws Exception {
+        final IResourceExtractor re = new TreeResourceExtractor();
+        re.setup(new IResourceReader() {
+            boolean finished = false;
+
+            @Override
+            public List<Resource> read(int pageSize) throws Exception {
+                finished = true;
+                final List<Resource> r = new ArrayList<>();
+                r.add(new Resource("http://hossein", "حسین (64)"));
+                return r;
+            }
+
+            @Override
+            public Boolean isFinished() {
+                return finished;
+            }
+
+            @Override
+            public void close() throws Exception {
+
+            }
+        }, label -> {
+            final HashSet<String> newLabels = new HashSet<>();
+            newLabels.add(label);
+            newLabels.add(label.replaceAll("\\(.*\\)", "").trim());
+            return newLabels;
+        }, 0);
+        final List<MatchedResource> x = re.search("حسین", false);
         x.forEach(System.out::println);
     }
 }

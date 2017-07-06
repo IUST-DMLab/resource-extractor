@@ -1,9 +1,6 @@
 package ir.ac.iust.dml.kg.resource.extractor.tree;
 
-import ir.ac.iust.dml.kg.resource.extractor.IResourceExtractor;
-import ir.ac.iust.dml.kg.resource.extractor.IResourceReader;
-import ir.ac.iust.dml.kg.resource.extractor.MatchedResource;
-import ir.ac.iust.dml.kg.resource.extractor.Resource;
+import ir.ac.iust.dml.kg.resource.extractor.*;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -19,6 +16,11 @@ public class TreeResourceExtractor implements IResourceExtractor {
 
     @Override
     public void setup(IResourceReader reader, int pageSize) throws Exception {
+        setup(reader, null, pageSize);
+    }
+
+    @Override
+    public void setup(IResourceReader reader, ILabelConverter converter, int pageSize) throws Exception {
         LOGGER.info("Start create index");
         while (!reader.isFinished()) {
             final List<Resource> resources = reader.read(pageSize);
@@ -26,7 +28,12 @@ public class TreeResourceExtractor implements IResourceExtractor {
                 final Set<String> newLabels = new HashSet<>();
                 final Resource old = allResource.get(r.getIri());
                 r.getVariantLabel().forEach(l -> {
-                    if (old == null || !old.getVariantLabel().contains(l))
+                    if (converter != null)
+                        converter.convert(l).forEach(l2 -> {
+                            if (old == null || !old.getVariantLabel().contains(l2))
+                                newLabels.add(l2);
+                        });
+                    else if (old == null || !old.getVariantLabel().contains(l))
                         newLabels.add(l);
                 });
                 final Resource current;
