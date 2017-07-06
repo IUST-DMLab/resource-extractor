@@ -24,15 +24,10 @@ public class TreeResourceExtractor implements IResourceExtractor {
             final List<Resource> resources = reader.read(pageSize);
             resources.forEach(r -> {
                 final Set<String> newLabels = new HashSet<>();
-                final Set<String> newAmbiguities = new HashSet<>();
                 final Resource old = allResource.get(r.getIri());
                 r.getVariantLabel().forEach(l -> {
                     if (old == null || !old.getVariantLabel().contains(l))
                         newLabels.add(l);
-                });
-                r.getDisambiguatedFrom().forEach(l -> {
-                    if (old == null || !old.getDisambiguatedFrom().contains(l))
-                        newAmbiguities.add(l);
                 });
                 final Resource current;
                 if (old == null) {
@@ -49,10 +44,8 @@ public class TreeResourceExtractor implements IResourceExtractor {
                     if (!r.getClassTree().isEmpty())
                         old.getClassTree().addAll(r.getClassTree());
                     old.getVariantLabel().addAll(newLabels);
-                    old.getDisambiguatedFrom().addAll(newAmbiguities);
                 }
                 newLabels.forEach(l -> root.add(current, l.split("\\s", -1), 0));
-                newAmbiguities.forEach(l -> root.addAmbiguity(current, l.split("\\s", -1), 0));
             });
         }
         LOGGER.info("Succeed to create index");

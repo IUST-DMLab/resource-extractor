@@ -42,7 +42,7 @@ public class MatchedResource {
         final StringBuilder str = new StringBuilder();
         if (ambiguities != null && !ambiguities.isEmpty())
             ambiguities.forEach(a -> str.append(String.format("or(%s)", a)));
-        return String.format("<-%d-%d-> %s \t %s", start, end, resource, str);
+        return String.format("[%d %d] %s \t %s", start, end, resource, str);
 
     }
 }

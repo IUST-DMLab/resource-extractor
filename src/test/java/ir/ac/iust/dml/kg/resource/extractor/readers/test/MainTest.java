@@ -1,9 +1,6 @@
 package ir.ac.iust.dml.kg.resource.extractor.readers.test;
 
-import ir.ac.iust.dml.kg.resource.extractor.IResourceExtractor;
-import ir.ac.iust.dml.kg.resource.extractor.IResourceReader;
-import ir.ac.iust.dml.kg.resource.extractor.Resource;
-import ir.ac.iust.dml.kg.resource.extractor.ResourceCache;
+import ir.ac.iust.dml.kg.resource.extractor.*;
 import ir.ac.iust.dml.kg.resource.extractor.readers.ResourceReaderFromKGStoreV1Service;
 import ir.ac.iust.dml.kg.resource.extractor.tree.TreeResourceExtractor;
 import org.junit.Test;
@@ -46,7 +43,37 @@ public class MainTest {
             assert Objects.equals(allResources.get(i).getType(), allCachedResource.get(i).getType());
             assert Objects.equals(allResources.get(i).getVariantLabel(), allCachedResource.get(i).getVariantLabel());
             assert Objects.equals(allResources.get(i).getClassTree(), allCachedResource.get(i).getClassTree());
-            assert Objects.equals(allResources.get(i).getDisambiguatedFrom(), allCachedResource.get(i).getDisambiguatedFrom());
         }
+    }
+
+    @Test
+    public void resourceExtractor() throws Exception {
+        final IResourceExtractor re = new TreeResourceExtractor();
+        re.setup(new IResourceReader() {
+            boolean finished = false;
+
+            @Override
+            public List<Resource> read(int pageSize) throws Exception {
+                finished = true;
+                final List<Resource> r = new ArrayList<>();
+                r.add(new Resource("http://hossein", "حسین", "حسین خادمی", "حسین خالدی"));
+                r.add(new Resource("http://hossein2", "حسین", "حسین احمدی"));
+                r.add(new Resource("http://khaledi", "خادمی خالدی"));
+                r.add(new Resource("http://majid", "مجید", "مجید عسگری"));
+                return r;
+            }
+
+            @Override
+            public Boolean isFinished() {
+                return finished;
+            }
+
+            @Override
+            public void close() throws Exception {
+
+            }
+        }, 0);
+        final List<MatchedResource> x = re.search("حسین خادمی خالدی و مجید", false);
+        x.forEach(System.out::println);
     }
 }

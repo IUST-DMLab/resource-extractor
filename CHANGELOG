@@ -1,3 +1,6 @@
+* 1.3.0
+    - Do not use ambiguities and compute it from label
+
 * 1.2.0
     - Add ResourceReaderFromVirtuoso to read from virtuoso
     - Make resource cache reader parallel

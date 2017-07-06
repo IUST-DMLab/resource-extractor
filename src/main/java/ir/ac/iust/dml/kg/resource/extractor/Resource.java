@@ -1,6 +1,7 @@
 package ir.ac.iust.dml.kg.resource.extractor;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,7 +15,6 @@ public class Resource implements Serializable {
     private final Set<String> classTree = new HashSet<>();
     private String label;
     private final Set<String> variantLabel = new HashSet<>();
-    private final Set<String> disambiguatedFrom = new HashSet<>();
 
     /**
      * Copy constructor
@@ -26,13 +26,18 @@ public class Resource implements Serializable {
         this.classTree.addAll(copy.classTree);
         this.label = copy.label;
         this.variantLabel.addAll(copy.variantLabel);
-        this.disambiguatedFrom.addAll(copy.disambiguatedFrom);
     }
 
     public Resource(String iri) {
         this.iri = iri;
     }
 
+    public Resource(String iri, String label, String... variantLabel) {
+        this.iri = iri;
+        this.label = label;
+        this.variantLabel.add(label);
+        Collections.addAll(this.variantLabel, variantLabel);
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -51,7 +56,7 @@ public class Resource implements Serializable {
 
     public boolean hasData() {
         return type != null || instanceOf != null || !classTree.isEmpty() ||
-                label != null || !variantLabel.isEmpty() || !disambiguatedFrom.isEmpty();
+                label != null || !variantLabel.isEmpty();
     }
 
     public String getIri() {
@@ -94,13 +99,8 @@ public class Resource implements Serializable {
         return variantLabel;
     }
 
-    public Set<String> getDisambiguatedFrom() {
-        return disambiguatedFrom;
-    }
-
-
     @Override
     public String toString() {
-        return String.format("%s(%s)", type, iri);
+        return String.format("<%s>", iri);
     }
 }
