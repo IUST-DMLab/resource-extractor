@@ -26,7 +26,7 @@ public class ReadersTest {
         final ResourceCache cache = new ResourceCache("h:\\test2", true);
         try (IResourceReader reader = new ResourceReaderFromVirtuoso("194.225.227.161", "1111",
                 "dba", "fkgVIRTUOSO2017", "http://fkg.iust.ac.ir/")) {
-            cache.cache(reader, 10000);
+            cache.cache(reader, 1000);
         }
     }
 
@@ -34,7 +34,7 @@ public class ReadersTest {
     public void cacheTest() throws Exception {
         long t1 = System.currentTimeMillis();
         IResourceExtractor extractor = new TreeResourceExtractor();
-        try (IResourceReader reader = new ResourceCache("C:\\Users\\HosseiN\\Downloads\\Telegram Desktop\\cache", true)) {
+        try (IResourceReader reader = new ResourceCache("H:\\test2", true)) {
             extractor.setup(reader, 1000);
         }
         System.out.println("" + (System.currentTimeMillis() - t1));

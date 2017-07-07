@@ -29,7 +29,9 @@ class TreeNode {
 
     void add(Resource resource, String[] path, int position) {
         if (position == path.length) {
-            if (this.resource == null || this.resource.equals(resource))
+            if (!ambiguities.isEmpty())
+                ambiguities.add(resource);
+            else if (this.resource == null || this.resource.equals(resource))
                 this.resource = resource;
             else if (this.resource != null) {
                 ambiguities.add(resource);
