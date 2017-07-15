@@ -1,6 +1,7 @@
 package ir.ac.iust.dml.kg.resource.extractor.readers.test;
 
 import ir.ac.iust.dml.kg.resource.extractor.*;
+import ir.ac.iust.dml.kg.resource.extractor.ahocorasick.AhoCorasickResourceExtractor;
 import ir.ac.iust.dml.kg.resource.extractor.readers.ResourceReaderFromKGStoreV1Service;
 import ir.ac.iust.dml.kg.resource.extractor.tree.TreeResourceExtractor;
 import org.junit.Test;
@@ -16,11 +17,11 @@ import java.util.Objects;
 public class MainTest {
     @Test
     public void test() throws Exception {
-        IResourceExtractor extractor = new TreeResourceExtractor();
-        try (IResourceReader reader = new ResourceReaderFromKGStoreV1Service("http://localhost:8091/")) {
+        IResourceExtractor extractor = new AhoCorasickResourceExtractor();
+        try (IResourceReader reader = new ResourceCache("H:\\cache", true)) {
             extractor.setup(reader, 1000);
         }
-        extractor.search(" قانون اساسی ایران ماگدبورگ", true).forEach(System.out::println);
+        extractor.search(" قانون اساسی ایران ماگدبورگ زادگاه حسن روحانی", true).forEach(System.out::println);
     }
 
     @Test
@@ -108,4 +109,38 @@ public class MainTest {
         final List<MatchedResource> x = re.search("حسین", false);
         x.forEach(System.out::println);
     }
+
+    @Test
+    public void ahoCorasickResourceExtractor() throws Exception {
+        final IResourceExtractor re = new AhoCorasickResourceExtractor();
+        re.setup(new IResourceReader() {
+            boolean finished = false;
+
+            @Override
+            public List<Resource> read(int pageSize) throws Exception {
+                finished = true;
+                final List<Resource> r = new ArrayList<>();
+                r.add(new Resource("http://ac", "a c"));
+                r.add(new Resource("http://c", "c"));
+                r.add(new Resource("http://ca", "c a"));
+                r.add(new Resource("http://abb", "a b b"));
+                r.add(new Resource("http://b", "b"));
+                r.add(new Resource("http://bb", "b b"));
+                return r;
+            }
+
+            @Override
+            public Boolean isFinished() {
+                return finished;
+            }
+
+            @Override
+            public void close() throws Exception {
+
+            }
+        }, 0);
+        final List<MatchedResource> x = re.search("a c a b b", false);
+        x.forEach(System.out::println);
+    }
+
 }
