@@ -34,7 +34,7 @@ public class ReadersTest {
     public void cacheTest() throws Exception {
         long t1 = System.currentTimeMillis();
         IResourceExtractor extractor = new TreeResourceExtractor();
-        try (IResourceReader reader = new ResourceCache("H:\\test2", true)) {
+        try (IResourceReader reader = new ResourceCache("H:\\cache", true)) {
             extractor.setup(reader, 1000);
         }
         System.out.println("" + (System.currentTimeMillis() - t1));
