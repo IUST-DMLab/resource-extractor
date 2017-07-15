@@ -45,8 +45,12 @@ public class AhoCorasickResourceExtractor implements IResourceExtractor {
             final MatchedResource current = resources.get(j);
             if (bestMatch == null || current.getStart() < bestMatch.getStart())
                 bestMatch = current;
-            else if (current.getEnd() <= bestMatch.getEnd())
-                current.setSubsetOf(bestMatch);
+            else if (current.getEnd() <= bestMatch.getEnd()) {
+                if (removeSubset)
+                    resources.remove(j);
+                else
+                    current.setSubsetOf(bestMatch);
+            }
         }
         return resources;
     }

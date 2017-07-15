@@ -139,7 +139,7 @@ public class MainTest {
 
             }
         }, 0);
-        final List<MatchedResource> x = re.search("a c a b b", false);
+        final List<MatchedResource> x = re.search("a c a b b", true);
         x.forEach(System.out::println);
     }
 
