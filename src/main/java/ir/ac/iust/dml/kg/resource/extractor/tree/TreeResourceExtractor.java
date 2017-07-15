@@ -4,16 +4,18 @@ import ir.ac.iust.dml.kg.resource.extractor.*;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Create a tree on labels of resource for fast matching
  */
 public class TreeResourceExtractor implements IResourceExtractor {
     private TreeNode root = new TreeNode();
-    private Map<String, Resource> allResource = new HashMap<>();
     static final Logger LOGGER = LogManager.getLogger(TreeResourceExtractor.class);
-
+    private final AllResourceCache cache = new AllResourceCache();
     @Override
     public void setup(IResourceReader reader, int pageSize) throws Exception {
         setup(reader, null, pageSize);
@@ -22,36 +24,12 @@ public class TreeResourceExtractor implements IResourceExtractor {
     @Override
     public void setup(IResourceReader reader, ILabelConverter converter, int pageSize) throws Exception {
         LOGGER.info("Start create index");
+        //noinspection Duplicates
         while (!reader.isFinished()) {
             final List<Resource> resources = reader.read(pageSize);
             resources.forEach(r -> {
                 final Set<String> newLabels = new HashSet<>();
-                final Resource old = allResource.get(r.getIri());
-                r.getVariantLabel().forEach(l -> {
-                    if (converter != null)
-                        converter.convert(l).forEach(l2 -> {
-                            if (old == null || !old.getVariantLabel().contains(l2))
-                                newLabels.add(l2);
-                        });
-                    else if (old == null || !old.getVariantLabel().contains(l))
-                        newLabels.add(l);
-                });
-                final Resource current;
-                if (old == null) {
-                    current = r;
-                    allResource.put(current.getIri(), current);
-                } else {
-                    current = old;
-                    if (r.getLabel() != null)
-                        old.setLabel(r.getLabel());
-                    if (r.getInstanceOf() != null)
-                        old.setInstanceOf(r.getInstanceOf());
-                    if (r.getType() != null)
-                        old.setType(r.getType());
-                    if (!r.getClassTree().isEmpty())
-                        old.getClassTree().addAll(r.getClassTree());
-                    old.getVariantLabel().addAll(newLabels);
-                }
+                final Resource current = cache.addOrUpdate(r, converter, newLabels);
                 newLabels.forEach(l -> root.add(current, l.split("\\s", -1), 0));
             });
         }
@@ -89,6 +67,6 @@ public class TreeResourceExtractor implements IResourceExtractor {
 
     @Override
     public Resource getResourceByIRI(String iri) {
-        return allResource.get(iri);
+        return cache.get(iri);
     }
 }
