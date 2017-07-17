@@ -6,6 +6,8 @@ import ir.ac.iust.dml.kg.resource.extractor.readers.ResourceReaderFromKGStoreV1S
 import ir.ac.iust.dml.kg.resource.extractor.tree.TreeResourceExtractor;
 import org.junit.Test;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -141,6 +143,40 @@ public class MainTest {
         }, 0);
         final List<MatchedResource> x = re.search("a c a b b", true);
         x.forEach(System.out::println);
+    }
+
+    @Test
+    public void speedTest() throws Exception {
+        final List<String> lines = new ArrayList<>();
+        final List<Integer> count = new ArrayList<>();
+        Files.readAllLines(Paths.get("h:\\top-queries-both-logs.csv")).stream().skip(1).forEach(l -> {
+            String[] args = l.split(",");
+            if (args.length == 2) {
+                lines.add(args[0].replace("\"", ""));
+                count.add(Integer.parseInt(args[1].replace("\"", "")));
+            } else
+                System.err.println("Bag log:" + l);
+        });
+        long setupTime = System.currentTimeMillis();
+        IResourceExtractor extractor = new AhoCorasickResourceExtractor();
+        try (IResourceReader reader = new ResourceCache("H:\\cache", true)) {
+            extractor.setup(reader, 1000);
+        }
+        setupTime = System.currentTimeMillis() - setupTime;
+        System.out.println("Setup time: " + setupTime);
+        int totalCount = 0;
+        long queryTime = System.currentTimeMillis();
+        for (int i = 0; i < lines.size(); i++) {
+            final int c = count.get(i);
+            final String l = lines.get(i);
+            //Repeat query by it count
+            for (int j = 0; j < c; j++) {
+                extractor.search(l, false);
+            }
+            totalCount += c;
+        }
+        queryTime = System.currentTimeMillis() - queryTime;
+        System.out.println("Query time: " + queryTime);
     }
 
 }
