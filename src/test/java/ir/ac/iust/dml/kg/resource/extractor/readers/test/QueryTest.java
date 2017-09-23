@@ -12,6 +12,11 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 
+/**
+ * Farsi Knowledge Graph Project
+ * Iran University of Science and Technology (Year 2017)
+ * Developed by HosseiN Khademi khaledi
+ */
 public class QueryTest {
     private final static int COUNT = 50;
     private final static boolean REPEAT_ALLOW = false;

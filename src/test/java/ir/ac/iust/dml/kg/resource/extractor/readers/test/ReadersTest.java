@@ -9,6 +9,10 @@ import ir.ac.iust.dml.kg.resource.extractor.tree.TreeResourceExtractor;
 import org.junit.Test;
 
 /**
+ * Farsi Knowledge Graph Project
+ * Iran University of Science and Technology (Year 2017)
+ * Developed by HosseiN Khademi khaledi
+ *
  * test readers
  */
 public class ReadersTest {

@@ -17,6 +17,10 @@ import java.util.Collections;
 import java.util.List;
 
 /**
+ * Farsi Knowledge Graph Project
+ * Iran University of Science and Technology (Year 2017)
+ * Developed by HosseiN Khademi khaledi
+ *
  * Read entity from KGStore Service [/rs/v1/triples/search]
  */
 public class ResourceReaderFromKGStoreV1Service implements IResourceReader {

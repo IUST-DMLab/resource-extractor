@@ -8,6 +8,10 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * Farsi Knowledge Graph Project
+ * Iran University of Science and Technology (Year 2017)
+ * Developed by HosseiN Khademi khaledi
+ *
  * Candidate of entity must not entity yet
  */
 public class Candidate {

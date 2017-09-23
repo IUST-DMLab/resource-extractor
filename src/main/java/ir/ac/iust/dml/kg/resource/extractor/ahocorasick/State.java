@@ -5,6 +5,10 @@ import ir.ac.iust.dml.kg.resource.extractor.Resource;
 import java.util.*;
 
 /**
+ * Farsi Knowledge Graph Project
+ * Iran University of Science and Technology (Year 2017)
+ * Developed by HosseiN Khademi khaledi
+ *
  * State of aho-corasick
  */
 class State {

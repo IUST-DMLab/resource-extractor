@@ -13,6 +13,11 @@ import java.nio.file.Paths;
 import java.util.*;
 
 /**
+ *
+ * Farsi Knowledge Graph Project
+ * Iran University of Science and Technology (Year 2017)
+ * Developed by HosseiN Khademi khaledi
+ *
  * Test entity reader
  */
 public class MainTest {

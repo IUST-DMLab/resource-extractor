@@ -17,6 +17,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 /**
+ *
+ * Farsi Knowledge Graph Project
+ * Iran University of Science and Technology (Year 2017)
+ * Developed by HosseiN Khademi khaledi
+ *
  * Cache iReaders to a directory to read it again
  * Directory must be empty
  */
