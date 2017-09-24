@@ -6,14 +6,18 @@ import ir.ac.iust.dml.kg.resource.extractor.readers.ResourceReaderFromKGStoreV1S
 import ir.ac.iust.dml.kg.resource.extractor.tree.TreeResourceExtractor;
 import org.junit.Test;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
+ *
+ * Farsi Knowledge Graph Project
+ * Iran University of Science and Technology (Year 2017)
+ * Developed by HosseiN Khademi khaledi
+ *
  * Test entity reader
  */
 public class MainTest {
@@ -158,14 +162,14 @@ public class MainTest {
                 System.err.println("Bag log:" + l);
         });
         long setupTime = System.currentTimeMillis();
-        IResourceExtractor extractor = new AhoCorasickResourceExtractor();
+        IResourceExtractor extractor = new TreeResourceExtractor();
         try (IResourceReader reader = new ResourceCache("H:\\cache", true)) {
             extractor.setup(reader, 1000);
         }
         setupTime = System.currentTimeMillis() - setupTime;
         System.out.println("Setup time: " + setupTime);
         int totalCount = 0;
-        long queryTime = System.currentTimeMillis();
+        double queryTime = System.currentTimeMillis();
         for (int i = 0; i < lines.size(); i++) {
             final int c = count.get(i);
             final String l = lines.get(i);
@@ -176,7 +180,50 @@ public class MainTest {
             totalCount += c;
         }
         queryTime = System.currentTimeMillis() - queryTime;
-        System.out.println("Query time: " + queryTime);
+        System.out.println("Query time: " + queryTime / totalCount);
+        System.out.println(totalCount);
     }
+
+    @Test
+    public void speedTest2() throws Exception {
+        final List<String> words = new ArrayList<>();
+        Files.readAllLines(Paths.get("h:\\top-queries-both-logs.csv")).stream().skip(1).forEach(l -> {
+            String[] args = l.split(",");
+            if (args.length == 2) {
+                Collections.addAll(words, args[0].replace("\"", "").split("\\s", -1));
+            }
+        });
+        long setupTime = System.currentTimeMillis();
+        IResourceExtractor extractor = new AhoCorasickResourceExtractor();
+        try (IResourceReader reader = new ResourceCache("H:\\cache", true)) {
+            extractor.setup(reader, 1000);
+        }
+        setupTime = System.currentTimeMillis() - setupTime;
+        System.out.println("Setup time: " + setupTime);
+        double[][] queryTime = new double[1000][];
+        for (int i = 0; i < queryTime.length; i++) {
+            final StringBuilder strBuilder = new StringBuilder();
+            for (int j = 0; j <= i; j++)
+                strBuilder.append(words.get(j)).append(" ");
+            final String sentence = strBuilder.toString();
+            queryTime[i] = new double[5];
+            for (int k = 0; k < queryTime[i].length; k++) {
+                queryTime[i][k] = System.currentTimeMillis();
+                for (int z = 0; z < 20; z++)
+                    extractor.search(sentence, false);
+                queryTime[i][k] = (System.currentTimeMillis() - queryTime[i][k]) / 20;
+            }
+            Arrays.sort(queryTime[i]);
+            System.out.println("" + i + "\t:" + queryTime[i][2]);
+        }
+        try (BufferedWriter br = new BufferedWriter(new FileWriter("d:\\res.out"))) {
+            for (int i = 0; i < queryTime.length; i++) {
+                br.write("" + queryTime[i][2]);
+                br.newLine();
+            }
+
+        }
+    }
+
 
 }

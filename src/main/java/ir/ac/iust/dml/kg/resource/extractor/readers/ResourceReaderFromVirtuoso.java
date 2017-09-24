@@ -17,6 +17,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Farsi Knowledge Graph Project
+ * Iran University of Science and Technology (Year 2017)
+ * Developed by HosseiN Khademi khaledi
+ *
  * Read entity from virtuoso
  */
 public class ResourceReaderFromVirtuoso implements IResourceReader {

@@ -9,14 +9,18 @@ import ir.ac.iust.dml.kg.resource.extractor.tree.TreeResourceExtractor;
 import org.junit.Test;
 
 /**
+ * Farsi Knowledge Graph Project
+ * Iran University of Science and Technology (Year 2017)
+ * Developed by HosseiN Khademi khaledi
+ *
  * test readers
  */
 public class ReadersTest {
     @Test
     public void testKGStoreV1Service() throws Exception {
-        try (IResourceReader reader = new ResourceReaderFromKGStoreV1Service("http://localhost:8091/")) {
-            while (!reader.isFinished())
-                reader.read(1000).forEach(System.out::println);
+        final ResourceCache cache = new ResourceCache("G:\\Cache", true);
+        try (IResourceReader reader = new ResourceReaderFromKGStoreV1Service("http://dmls.iust.ac.ir:8091/")) {
+            cache.cache(reader, 1000000);
         }
 
     }

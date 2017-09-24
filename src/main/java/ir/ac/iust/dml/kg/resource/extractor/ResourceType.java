@@ -1,6 +1,11 @@
 package ir.ac.iust.dml.kg.resource.extractor;
 
 /**
+ *
+ * Farsi Knowledge Graph Project
+ * Iran University of Science and Technology (Year 2017)
+ * Developed by HosseiN Khademi khaledi
+ *
  * Type of resource
  */
 public enum ResourceType {

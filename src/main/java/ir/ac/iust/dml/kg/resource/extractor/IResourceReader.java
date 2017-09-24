@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.util.List;
 
 /**
+ * Farsi Knowledge Graph Project
+ * Iran University of Science and Technology (Year 2017)
+ * Developed by HosseiN Khademi khaledi
+ *
  * Reader interface for resource
  * implementors must open all needed connection in constructor
  * implementors must read list of entity on each call and return list of readed

@@ -9,6 +9,10 @@ import java.util.Queue;
 import java.util.concurrent.LinkedBlockingDeque;
 
 /**
+ * Farsi Knowledge Graph Project
+ * Iran University of Science and Technology (Year 2017)
+ * Developed by HosseiN Khademi khaledi
+ *
  * A trie on words
  */
 class Trie {

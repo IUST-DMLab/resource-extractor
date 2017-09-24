@@ -9,6 +9,10 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * Farsi Knowledge Graph Project
+ * Iran University of Science and Technology (Year 2017)
+ * Developed by HosseiN Khademi khaledi
+ *
  * Use Aho–Corasick algorithm for string matching
  */
 public class AhoCorasickResourceExtractor implements IResourceExtractor {
