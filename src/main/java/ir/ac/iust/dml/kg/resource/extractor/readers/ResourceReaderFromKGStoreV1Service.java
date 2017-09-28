@@ -64,6 +64,9 @@ public class ResourceReaderFromKGStoreV1Service implements IResourceReader {
                           case "http://www.w3.org/2002/07/owl#NamedIndividual":
                                 last.setType(ResourceType.Entity);
                                 break;
+                          case "https://www.w3.org/2009/08/skos-reference/skos.html#Concept":
+                            last.setType(ResourceType.Category);
+                            break;
                           case "http://www.w3.org/2002/07/owl#DatatypeProperty":
                           case "http://www.w3.org/2002/07/owl#ObjectProperty":
                             case "https://www.w3.org/1999/02/22-rdf-syntax-ns#Property":
