@@ -51,7 +51,7 @@ public class ResourceReaderFromVirtuoso implements IResourceReader {
                     resources.add(last);
                 last = new Resource(subject);
             }
-            ResourceConverter.setTypeAndLabel(last, predicate, value);
+            ResourceDataFiller.fill(last, predicate, value, null);
         }
 
         if (!result.hasNext()) {

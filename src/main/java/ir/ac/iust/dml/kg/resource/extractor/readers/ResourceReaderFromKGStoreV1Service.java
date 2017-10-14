@@ -55,7 +55,7 @@ public class ResourceReaderFromKGStoreV1Service implements IResourceReader {
                         resources.add(last);
                     last = new Resource(d.subject);
                 }
-              ResourceConverter.setTypeAndLabel(last, d.predicate, d.object.value);
+              ResourceDataFiller.fill(last, d.predicate, d.object.value, d.object.lang);
             }
             lastPage++;
             if (lastPage > result.pageCount) {
@@ -84,6 +84,7 @@ public class ResourceReaderFromKGStoreV1Service implements IResourceReader {
     @JsonIgnoreProperties(ignoreUnknown = true)
     static class ValueData {
         public String value;
+        public String lang;
     }
 
     @SuppressWarnings("WeakerAccess")

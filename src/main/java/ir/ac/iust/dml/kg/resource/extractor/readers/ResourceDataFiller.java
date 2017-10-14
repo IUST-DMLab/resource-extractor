@@ -3,9 +3,9 @@ package ir.ac.iust.dml.kg.resource.extractor.readers;
 import ir.ac.iust.dml.kg.resource.extractor.Resource;
 import ir.ac.iust.dml.kg.resource.extractor.ResourceType;
 
-class ResourceConverter {
+class ResourceDataFiller {
 
-  static void setTypeAndLabel(Resource resource, String predicate, String value) {
+  static void fill(Resource resource, String predicate, String value, String language) {
     switch (predicate) {
       case "http://www.w3.org/1999/02/22-rdf-syntax-ns#type":
       case "https://www.w3.org/1999/02/22-rdf-syntax-ns#type":
@@ -14,7 +14,8 @@ class ResourceConverter {
           case "http://www.w3.org/2002/07/owl#NamedIndividual":
             resource.setType(ResourceType.Entity);
             break;
-          case "https://www.w3.org/2009/08/skos-reference/skos.html#Concept":
+          case "http://www.w3.org/2009/08/skos-reference/skos.html#Concept":
+          case "http://www.w3.org/2004/02/skos/core#Concept":
             resource.setType(ResourceType.Category);
             break;
           case "http://www.w3.org/2002/07/owl#DatatypeProperty":
@@ -33,7 +34,10 @@ class ResourceConverter {
         resource.setInstanceOf(value);
         break;
       case "http://www.w3.org/2000/01/rdf-schema#label":
-        resource.setLabel(value);
+        // we may have more than one label for each resource. but we have just one persian
+        // label for each resources
+        if((language != null && language.equals("fa")) || resource.getLabel() == null )
+          resource.setLabel(value);
         resource.getVariantLabel().add(value);
         break;
       case "http://fkg.iust.ac.ir/ontology/variantLabel":

@@ -28,9 +28,9 @@ public class ReadersTest {
 
     @Test
     public void testKGStoreV2Service() throws Exception {
-        final ResourceCache cache = new ResourceCache("D:\\Cache", true);
+        final ResourceCache cache = new ResourceCache("/home/asgari/cache/ks", true);
         try (IResourceReader reader = new ResourceReaderFromKGStoreV2Service("http://dmls.iust.ac.ir:8091/")) {
-            cache.cache(reader, 1000000);
+            cache.cache(reader, 10000);
         }
 
     }
@@ -48,11 +48,13 @@ public class ReadersTest {
     public void cacheTest() throws Exception {
         long t1 = System.currentTimeMillis();
         IResourceExtractor extractor = new TreeResourceExtractor();
-        try (IResourceReader reader = new ResourceCache("H:\\cache", true)) {
+        try (IResourceReader reader = new ResourceCache("/home/asgari/cache/ks", true)) {
             extractor.setup(reader, 1000);
         }
         System.out.println("" + (System.currentTimeMillis() - t1));
-        extractor.search(" قانون اساسی ایران ماگدبورگ", true, false)
+        System.out.println(extractor.search(" قانون اساسی ایران ماگدبورگ", true, true).get(0).getAmbiguities().size());
+        System.out.println(extractor.search(" قانون اساسی ایران ماگدبورگ", true, false).get(0).getAmbiguities().size());
+        extractor.search(" قانون اساسی ایران ماگدبورگ", true, true)
             .forEach(System.out::println);
     }
 

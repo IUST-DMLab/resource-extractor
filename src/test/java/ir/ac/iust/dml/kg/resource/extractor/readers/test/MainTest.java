@@ -7,8 +7,11 @@ import ir.ac.iust.dml.kg.resource.extractor.tree.TreeResourceExtractor;
 import org.junit.Test;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
+import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
@@ -26,7 +29,7 @@ public class MainTest {
     public void test() throws Exception {
         IResourceExtractor extractor = new AhoCorasickResourceExtractor();
         try (IResourceReader reader = new ResourceCache("H:\\cache", true)) {
-            extractor.setup(reader, 1000);
+            extractor.setup(reader, 10000);
         }
         extractor.search(" قانون اساسی ایران ماگدبورگ زادگاه حسن روحانی", true, true)
             .forEach(System.out::println);
@@ -35,16 +38,18 @@ public class MainTest {
     @Test
     public void cache() throws Exception {
         final String baseUrl = "http://localhost:8091/";
-        final ResourceCache cache = new ResourceCache("test");
+        final Path tempPath = Paths.get("test");
+        if(!Files.exists(tempPath)) Files.createDirectories(tempPath);
+        final ResourceCache cache = new ResourceCache(tempPath.toString());
         final List<Resource> allResources = new ArrayList<>();
         final List<Resource> allCachedResource = new ArrayList<>();
         try (IResourceReader reader = new ResourceReaderFromKGStoreV2Service(baseUrl)) {
-            cache.cache(reader, 2);
+            cache.cache(reader, 10000);
         }
         try (IResourceReader reader = new ResourceReaderFromKGStoreV2Service(baseUrl)) {
-            while (!reader.isFinished()) allResources.addAll(reader.read(2));
+            while (!reader.isFinished()) allResources.addAll(reader.read(10000));
         }
-        while (!cache.isFinished()) allCachedResource.addAll(cache.read(2));
+        while (!cache.isFinished()) allCachedResource.addAll(cache.read(10000));
         assert allResources.size() == allCachedResource.size();
         for (int i = 0; i < allResources.size(); i++) {
             assert Objects.equals(allResources.get(i).getIri(), allCachedResource.get(i).getIri());
@@ -54,6 +59,7 @@ public class MainTest {
             assert Objects.equals(allResources.get(i).getVariantLabel(), allCachedResource.get(i).getVariantLabel());
             assert Objects.equals(allResources.get(i).getClassTree(), allCachedResource.get(i).getClassTree());
         }
+        Files.walk(tempPath).map(Path::toFile).peek(System.out::println).forEach(File::delete);
     }
 
     @Test

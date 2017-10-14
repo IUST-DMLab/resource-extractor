@@ -40,8 +40,9 @@ public class TreeResourceExtractor implements IResourceExtractor {
         LOGGER.info("Succeed to create index");
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
-    public List<MatchedResource> search(String text, Boolean removeSubset, Boolean category) {
+    public List<MatchedResource> search(String text, Boolean removeSubset, Boolean removeCategory) {
         if (root == null) return null;
         final String[] words = text.split("\\s", -1);
         final List<Candidate> candidates = new ArrayList<>();
@@ -53,9 +54,10 @@ public class TreeResourceExtractor implements IResourceExtractor {
         final List<MatchedResource> resources = new ArrayList<>();
         MatchedResource currentBestMatch = null;
         for (Candidate c : candidates) {
-            final List<MatchedResource> newResources = c.createResource(removeSubset);
+            final List<MatchedResource> newResources = c.createResource(removeSubset, removeCategory);
             for (MatchedResource n : newResources) {
-                if (category != null && category && n.getResource().getType() == ResourceType.Category) continue;
+                if (removeCategory != null && removeCategory && n.getResource() != null &&
+                        n.getResource().getType() == ResourceType.Category) continue;
                 if (currentBestMatch != null && n.getEnd() <= currentBestMatch.getEnd()) {
                     if (!removeSubset) {
                         n.setSubsetOf(currentBestMatch);
