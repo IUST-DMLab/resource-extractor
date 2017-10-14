@@ -52,9 +52,11 @@ public class ReadersTest {
             extractor.setup(reader, 1000);
         }
         System.out.println("" + (System.currentTimeMillis() - t1));
-        System.out.println(extractor.search(" قانون اساسی ایران ماگدبورگ", true, true).get(0).getAmbiguities().size());
-        System.out.println(extractor.search(" قانون اساسی ایران ماگدبورگ", true, false).get(0).getAmbiguities().size());
+        extractor.search(" قانون اساسی ایران ماگدبورگ", true, false)
+            .forEach(System.out::println);
         extractor.search(" قانون اساسی ایران ماگدبورگ", true, true)
+            .forEach(System.out::println);
+        extractor.search("فرزندان هاشمی رفسنجانی", true, true)
             .forEach(System.out::println);
     }
 
