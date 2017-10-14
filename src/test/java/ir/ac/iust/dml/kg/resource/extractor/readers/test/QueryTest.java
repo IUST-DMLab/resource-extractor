@@ -17,6 +17,7 @@ import java.util.*;
  * Iran University of Science and Technology (Year 2017)
  * Developed by HosseiN Khademi khaledi
  */
+@SuppressWarnings("Duplicates")
 public class QueryTest {
     private final static int COUNT = 50;
     private final static boolean REPEAT_ALLOW = false;
@@ -91,7 +92,7 @@ public class QueryTest {
 
         final Map<String, KeyCount> resources = new HashMap<>();
         sentences.parallelStream().forEach(s -> {
-            final List<MatchedResource> res = extractor.search(s.key, true);
+            final List<MatchedResource> res = extractor.search(s.key, true, false);
             res.forEach(r -> {
                 if (r.getResource() != null) {
                     KeyCount current = resources.get(r.getResource().getIri());
@@ -111,11 +112,7 @@ public class QueryTest {
         });
         final List<KeyCount> lists = new ArrayList<>();
         lists.addAll(resources.values());
-        Collections.sort(lists, (o1, o2) -> {
-            if (o2.count > o1.count) return 1;
-            if (o2.count < o1.count) return -1;
-            return 0;
-        });
+        lists.sort((o1, o2) -> Double.compare(o2.count, o1.count));
         return lists;
     }
 

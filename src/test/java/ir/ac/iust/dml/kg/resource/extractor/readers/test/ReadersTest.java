@@ -4,6 +4,7 @@ import ir.ac.iust.dml.kg.resource.extractor.IResourceExtractor;
 import ir.ac.iust.dml.kg.resource.extractor.IResourceReader;
 import ir.ac.iust.dml.kg.resource.extractor.ResourceCache;
 import ir.ac.iust.dml.kg.resource.extractor.readers.ResourceReaderFromKGStoreV1Service;
+import ir.ac.iust.dml.kg.resource.extractor.readers.ResourceReaderFromKGStoreV2Service;
 import ir.ac.iust.dml.kg.resource.extractor.readers.ResourceReaderFromVirtuoso;
 import ir.ac.iust.dml.kg.resource.extractor.tree.TreeResourceExtractor;
 import org.junit.Test;
@@ -18,8 +19,17 @@ import org.junit.Test;
 public class ReadersTest {
     @Test
     public void testKGStoreV1Service() throws Exception {
-        final ResourceCache cache = new ResourceCache("G:\\Cache", true);
+        final ResourceCache cache = new ResourceCache("D:\\Cache", true);
         try (IResourceReader reader = new ResourceReaderFromKGStoreV1Service("http://dmls.iust.ac.ir:8091/")) {
+            cache.cache(reader, 1000000);
+        }
+
+    }
+
+    @Test
+    public void testKGStoreV2Service() throws Exception {
+        final ResourceCache cache = new ResourceCache("D:\\Cache", true);
+        try (IResourceReader reader = new ResourceReaderFromKGStoreV2Service("http://dmls.iust.ac.ir:8091/")) {
             cache.cache(reader, 1000000);
         }
 
@@ -29,7 +39,7 @@ public class ReadersTest {
     public void testVirtuosoReader() throws Exception {
         final ResourceCache cache = new ResourceCache("h:\\test2", true);
         try (IResourceReader reader = new ResourceReaderFromVirtuoso("194.225.227.161", "1111",
-                "dba", "fkgVIRTUOSO2017", "http://fkg.iust.ac.ir/")) {
+            "dba", "fkgVIRTUOSO2017", "http://majid.fkg.iust.ac.ir/")) {
             cache.cache(reader, 1000);
         }
     }
@@ -42,7 +52,8 @@ public class ReadersTest {
             extractor.setup(reader, 1000);
         }
         System.out.println("" + (System.currentTimeMillis() - t1));
-        extractor.search(" قانون اساسی ایران ماگدبورگ", true).forEach(System.out::println);
+        extractor.search(" قانون اساسی ایران ماگدبورگ", true, false)
+            .forEach(System.out::println);
     }
 
 }

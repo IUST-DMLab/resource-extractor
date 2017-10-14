@@ -41,7 +41,7 @@ public class TreeResourceExtractor implements IResourceExtractor {
     }
 
     @Override
-    public List<MatchedResource> search(String text, Boolean removeSubset) {
+    public List<MatchedResource> search(String text, Boolean removeSubset, Boolean category) {
         if (root == null) return null;
         final String[] words = text.split("\\s", -1);
         final List<Candidate> candidates = new ArrayList<>();
@@ -55,6 +55,7 @@ public class TreeResourceExtractor implements IResourceExtractor {
         for (Candidate c : candidates) {
             final List<MatchedResource> newResources = c.createResource(removeSubset);
             for (MatchedResource n : newResources) {
+                if (category != null && category && n.getResource().getType() == ResourceType.Category) continue;
                 if (currentBestMatch != null && n.getEnd() <= currentBestMatch.getEnd()) {
                     if (!removeSubset) {
                         n.setSubsetOf(currentBestMatch);

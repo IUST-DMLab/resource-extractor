@@ -2,7 +2,6 @@ package ir.ac.iust.dml.kg.resource.extractor.readers;
 
 import ir.ac.iust.dml.kg.resource.extractor.IResourceReader;
 import ir.ac.iust.dml.kg.resource.extractor.Resource;
-import ir.ac.iust.dml.kg.resource.extractor.ResourceType;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.eclipse.rdf4j.query.BindingSet;
@@ -52,47 +51,7 @@ public class ResourceReaderFromVirtuoso implements IResourceReader {
                     resources.add(last);
                 last = new Resource(subject);
             }
-            switch (predicate) {
-                case "http://www.w3.org/1999/02/22-rdf-syntax-ns#type":
-                case "https://www.w3.org/1999/02/22-rdf-syntax-ns#type":
-                    switch (value) {
-                        case "http://www.w3.org/2000/01/rdf-schema#Resource":
-                        case "http://www.w3.org/2002/07/owl#NamedIndividual":
-                            last.setType(ResourceType.Entity);
-                            break;
-                        case "https://www.w3.org/2009/08/skos-reference/skos.html#Concept":
-                            last.setType(ResourceType.Category);
-                            break;
-                        case "http://www.w3.org/2002/07/owl#DatatypeProperty":
-                        case "http://www.w3.org/2002/07/owl#ObjectProperty":
-                        case "https://www.w3.org/1999/02/22-rdf-syntax-ns#Property":
-                        case "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property":
-                            last.setType(ResourceType.Property);
-                            break;
-                        default:
-                            last.getClassTree().add(value);
-                            break;
-                    }
-                    break;
-                case "http://www.w3.org/1999/02/22-rdf-syntax-ns#instanceOf":
-                case "https://www.w3.org/1999/02/22-rdf-syntax-ns#instanceOf":
-                    // TODO not standard URL
-                case "http://fkg.iust.ac.ir/ontology/instanceOf":
-                    last.setInstanceOf(value);
-                    break;
-                case "http://www.w3.org/2000/01/rdf-schema#label":
-                    last.setLabel(value);
-                    last.getVariantLabel().add(value);
-                    break;
-                case "http://fkg.iust.ac.ir/ontology/variantLabel":
-                case "http://dbpedia.org/ontology/wikiDisambiguatedFrom":
-                case "http://fkg.iust.ac.ir/ontology/wikiDisambiguatedFrom":
-                    last.getVariantLabel().add(value);
-                    break;
-                case "http://www.w3.org/2000/01/rdf-schema#domain":
-                    last.getClassTree().add(value);
-                    break;
-            }
+            ResourceConverter.setTypeAndLabel(last, predicate, value);
         }
 
         if (!result.hasNext()) {

@@ -2,7 +2,7 @@ package ir.ac.iust.dml.kg.resource.extractor.readers.test;
 
 import ir.ac.iust.dml.kg.resource.extractor.*;
 import ir.ac.iust.dml.kg.resource.extractor.ahocorasick.AhoCorasickResourceExtractor;
-import ir.ac.iust.dml.kg.resource.extractor.readers.ResourceReaderFromKGStoreV1Service;
+import ir.ac.iust.dml.kg.resource.extractor.readers.ResourceReaderFromKGStoreV2Service;
 import ir.ac.iust.dml.kg.resource.extractor.tree.TreeResourceExtractor;
 import org.junit.Test;
 
@@ -20,6 +20,7 @@ import java.util.*;
  *
  * Test entity reader
  */
+@SuppressWarnings("Duplicates")
 public class MainTest {
     @Test
     public void test() throws Exception {
@@ -27,7 +28,8 @@ public class MainTest {
         try (IResourceReader reader = new ResourceCache("H:\\cache", true)) {
             extractor.setup(reader, 1000);
         }
-        extractor.search(" قانون اساسی ایران ماگدبورگ زادگاه حسن روحانی", true).forEach(System.out::println);
+        extractor.search(" قانون اساسی ایران ماگدبورگ زادگاه حسن روحانی", true, true)
+            .forEach(System.out::println);
     }
 
     @Test
@@ -36,10 +38,10 @@ public class MainTest {
         final ResourceCache cache = new ResourceCache("test");
         final List<Resource> allResources = new ArrayList<>();
         final List<Resource> allCachedResource = new ArrayList<>();
-        try (IResourceReader reader = new ResourceReaderFromKGStoreV1Service(baseUrl)) {
+        try (IResourceReader reader = new ResourceReaderFromKGStoreV2Service(baseUrl)) {
             cache.cache(reader, 2);
         }
-        try (IResourceReader reader = new ResourceReaderFromKGStoreV1Service(baseUrl)) {
+        try (IResourceReader reader = new ResourceReaderFromKGStoreV2Service(baseUrl)) {
             while (!reader.isFinished()) allResources.addAll(reader.read(2));
         }
         while (!cache.isFinished()) allCachedResource.addAll(cache.read(2));
@@ -79,7 +81,7 @@ public class MainTest {
 
             }
         }, 0);
-        final List<MatchedResource> x = re.search("محمد حسین خادمی خالدی", false);
+        final List<MatchedResource> x = re.search("محمد حسین خادمی خالدی", false, false);
         x.forEach(System.out::println);
     }
 
@@ -112,7 +114,7 @@ public class MainTest {
             newLabels.add(label.replaceAll("\\(.*\\)", "").trim());
             return newLabels;
         }, 0);
-        final List<MatchedResource> x = re.search("حسین", false);
+        final List<MatchedResource> x = re.search("حسین", false, false);
         x.forEach(System.out::println);
     }
 
@@ -145,7 +147,7 @@ public class MainTest {
 
             }
         }, 0);
-        final List<MatchedResource> x = re.search("a c a b b", true);
+        final List<MatchedResource> x = re.search("a c a b b", true, false);
         x.forEach(System.out::println);
     }
 
@@ -175,7 +177,7 @@ public class MainTest {
             final String l = lines.get(i);
             //Repeat query by it count
             for (int j = 0; j < c; j++) {
-                extractor.search(l, false);
+                extractor.search(l, false, false);
             }
             totalCount += c;
         }
@@ -210,7 +212,7 @@ public class MainTest {
             for (int k = 0; k < queryTime[i].length; k++) {
                 queryTime[i][k] = System.currentTimeMillis();
                 for (int z = 0; z < 20; z++)
-                    extractor.search(sentence, false);
+                    extractor.search(sentence, false, false);
                 queryTime[i][k] = (System.currentTimeMillis() - queryTime[i][k]) / 20;
             }
             Arrays.sort(queryTime[i]);
