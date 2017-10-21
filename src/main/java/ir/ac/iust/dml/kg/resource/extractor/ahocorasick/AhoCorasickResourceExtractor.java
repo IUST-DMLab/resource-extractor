@@ -41,13 +41,14 @@ public class AhoCorasickResourceExtractor implements IResourceExtractor {
     }
 
     @Override
-    public List<MatchedResource> search(String text, Boolean removeSubset, Boolean category) {
+    public List<MatchedResource> search(String text, Boolean removeSubset, Boolean removeCategory) {
+        if(removeCategory != null && removeCategory) return null;
         final String[] words = text.split("\\s", -1);
         final List<MatchedResource> resources = trie.parseText(words, removeSubset);
         MatchedResource bestMatch = null;
         for (int j = resources.size() - 1; j >= 0; j--) {
             final MatchedResource current = resources.get(j);
-          if (category != null && category && current.getResource().getType() == ResourceType.Category) continue;
+          if (current.getResource().getType() == ResourceType.Category) continue;
             if (bestMatch == null || current.getStart() < bestMatch.getStart())
                 bestMatch = current;
             else if (current.getEnd() <= bestMatch.getEnd()) {
