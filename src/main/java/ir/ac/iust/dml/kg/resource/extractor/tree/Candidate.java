@@ -2,10 +2,13 @@ package ir.ac.iust.dml.kg.resource.extractor.tree;
 
 import ir.ac.iust.dml.kg.resource.extractor.MatchedResource;
 import ir.ac.iust.dml.kg.resource.extractor.Resource;
+import ir.ac.iust.dml.kg.resource.extractor.ResourceType;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Farsi Knowledge Graph Project
@@ -40,11 +43,21 @@ public class Candidate {
         return path.get(path.size() - 1);
     }
 
-    List<MatchedResource> createResource(boolean removeSubset) {
+    List<MatchedResource> createResource(boolean removeSubset, boolean removeCategory) {
         final List<MatchedResource> result = new ArrayList<>();
         for (int j = path.size() - 1; j >= 0; j--) {
-            final Resource resource = path.get(j).getResource();
-            final Set<Resource> ambiguities = path.get(j).getAmbiguities();
+            Resource resource = path.get(j).getResource();
+            Set<Resource> ambiguities = path.get(j).getAmbiguities();
+            if(removeCategory) {
+                if(resource != null && resource.getType() != null && resource.getType() == ResourceType.Category)
+                    resource = null;
+                ambiguities = ambiguities.stream()
+                        .filter(a -> a.getType() != ResourceType.Category).collect(Collectors.toSet());
+                if(resource == null && ambiguities.size() == 1) {
+                    resource = ambiguities.iterator().next();
+                    ambiguities.clear();
+                }
+            }
             if (resource != null || !ambiguities.isEmpty()) {
                 final MatchedResource m = new MatchedResource(start, start + j - 1, resource, ambiguities);
                 result.add(m);

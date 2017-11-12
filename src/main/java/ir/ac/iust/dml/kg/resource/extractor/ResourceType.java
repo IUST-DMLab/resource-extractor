@@ -9,17 +9,18 @@ package ir.ac.iust.dml.kg.resource.extractor;
  * Type of resource
  */
 public enum ResourceType {
-    Entity, Property;
+    Entity, Property, Category;
 
 
     @Override
     public String toString() {
         switch (this) {
             case Property:
-                // TODO it must be http://www.w3.org/2002/07/owl#ObjectProperty but I didn't change it for backward compatibility
-                return "http://www.w3.org/2002/07/owl#DatatypeProperty";
+                return "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property";
             case Entity:
                 return "http://www.w3.org/2000/01/rdf-schema#Resource";
+            case Category:
+                return "http://www.w3.org/2009/08/skos-reference/skos.html#Concept";
         }
         throw new RuntimeException("Unknown type");
     }

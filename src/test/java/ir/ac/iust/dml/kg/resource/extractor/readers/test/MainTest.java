@@ -2,13 +2,16 @@ package ir.ac.iust.dml.kg.resource.extractor.readers.test;
 
 import ir.ac.iust.dml.kg.resource.extractor.*;
 import ir.ac.iust.dml.kg.resource.extractor.ahocorasick.AhoCorasickResourceExtractor;
-import ir.ac.iust.dml.kg.resource.extractor.readers.ResourceReaderFromKGStoreV1Service;
+import ir.ac.iust.dml.kg.resource.extractor.readers.ResourceReaderFromKGStoreV2Service;
 import ir.ac.iust.dml.kg.resource.extractor.tree.TreeResourceExtractor;
 import org.junit.Test;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
+import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
@@ -20,29 +23,33 @@ import java.util.*;
  *
  * Test entity reader
  */
+@SuppressWarnings("Duplicates")
 public class MainTest {
     @Test
     public void test() throws Exception {
         IResourceExtractor extractor = new AhoCorasickResourceExtractor();
         try (IResourceReader reader = new ResourceCache("H:\\cache", true)) {
-            extractor.setup(reader, 1000);
+            extractor.setup(reader, 10000);
         }
-        extractor.search(" قانون اساسی ایران ماگدبورگ زادگاه حسن روحانی", true).forEach(System.out::println);
+        extractor.search(" قانون اساسی ایران ماگدبورگ زادگاه حسن روحانی", true, true)
+            .forEach(System.out::println);
     }
 
     @Test
     public void cache() throws Exception {
         final String baseUrl = "http://localhost:8091/";
-        final ResourceCache cache = new ResourceCache("test");
+        final Path tempPath = Paths.get("test");
+        if(!Files.exists(tempPath)) Files.createDirectories(tempPath);
+        final ResourceCache cache = new ResourceCache(tempPath.toString());
         final List<Resource> allResources = new ArrayList<>();
         final List<Resource> allCachedResource = new ArrayList<>();
-        try (IResourceReader reader = new ResourceReaderFromKGStoreV1Service(baseUrl)) {
-            cache.cache(reader, 2);
+        try (IResourceReader reader = new ResourceReaderFromKGStoreV2Service(baseUrl)) {
+            cache.cache(reader, 10000);
         }
-        try (IResourceReader reader = new ResourceReaderFromKGStoreV1Service(baseUrl)) {
-            while (!reader.isFinished()) allResources.addAll(reader.read(2));
+        try (IResourceReader reader = new ResourceReaderFromKGStoreV2Service(baseUrl)) {
+            while (!reader.isFinished()) allResources.addAll(reader.read(10000));
         }
-        while (!cache.isFinished()) allCachedResource.addAll(cache.read(2));
+        while (!cache.isFinished()) allCachedResource.addAll(cache.read(10000));
         assert allResources.size() == allCachedResource.size();
         for (int i = 0; i < allResources.size(); i++) {
             assert Objects.equals(allResources.get(i).getIri(), allCachedResource.get(i).getIri());
@@ -52,6 +59,7 @@ public class MainTest {
             assert Objects.equals(allResources.get(i).getVariantLabel(), allCachedResource.get(i).getVariantLabel());
             assert Objects.equals(allResources.get(i).getClassTree(), allCachedResource.get(i).getClassTree());
         }
+        Files.walk(tempPath).map(Path::toFile).peek(System.out::println).forEach(File::delete);
     }
 
     @Test
@@ -79,7 +87,7 @@ public class MainTest {
 
             }
         }, 0);
-        final List<MatchedResource> x = re.search("محمد حسین خادمی خالدی", false);
+        final List<MatchedResource> x = re.search("محمد حسین خادمی خالدی", false, false);
         x.forEach(System.out::println);
     }
 
@@ -112,7 +120,7 @@ public class MainTest {
             newLabels.add(label.replaceAll("\\(.*\\)", "").trim());
             return newLabels;
         }, 0);
-        final List<MatchedResource> x = re.search("حسین", false);
+        final List<MatchedResource> x = re.search("حسین", false, false);
         x.forEach(System.out::println);
     }
 
@@ -145,7 +153,7 @@ public class MainTest {
 
             }
         }, 0);
-        final List<MatchedResource> x = re.search("a c a b b", true);
+        final List<MatchedResource> x = re.search("a c a b b", true, false);
         x.forEach(System.out::println);
     }
 
@@ -175,7 +183,7 @@ public class MainTest {
             final String l = lines.get(i);
             //Repeat query by it count
             for (int j = 0; j < c; j++) {
-                extractor.search(l, false);
+                extractor.search(l, false, false);
             }
             totalCount += c;
         }
@@ -210,7 +218,7 @@ public class MainTest {
             for (int k = 0; k < queryTime[i].length; k++) {
                 queryTime[i][k] = System.currentTimeMillis();
                 for (int z = 0; z < 20; z++)
-                    extractor.search(sentence, false);
+                    extractor.search(sentence, false, false);
                 queryTime[i][k] = (System.currentTimeMillis() - queryTime[i][k]) / 20;
             }
             Arrays.sort(queryTime[i]);
