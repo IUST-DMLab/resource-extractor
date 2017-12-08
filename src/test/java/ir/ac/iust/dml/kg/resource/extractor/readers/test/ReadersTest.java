@@ -5,6 +5,7 @@ import ir.ac.iust.dml.kg.resource.extractor.IResourceReader;
 import ir.ac.iust.dml.kg.resource.extractor.ResourceCache;
 import ir.ac.iust.dml.kg.resource.extractor.readers.ResourceReaderFromKGStoreV1Service;
 import ir.ac.iust.dml.kg.resource.extractor.readers.ResourceReaderFromKGStoreV2Service;
+import ir.ac.iust.dml.kg.resource.extractor.readers.ResourceReaderFromTTLs;
 import ir.ac.iust.dml.kg.resource.extractor.readers.ResourceReaderFromVirtuoso;
 import ir.ac.iust.dml.kg.resource.extractor.tree.TreeResourceExtractor;
 import org.junit.Test;
@@ -43,6 +44,15 @@ public class ReadersTest {
             cache.cache(reader, 1000);
         }
     }
+
+  @Test
+  public void testTTLReader() throws Exception {
+    final ResourceCache cache = new ResourceCache("D:\\test2", true);
+    try (IResourceReader reader = new ResourceReaderFromTTLs("C:\\Users\\ASUS\\ttl_store",
+        "http://majid.fkg.iust.ac.ir/")) {
+      cache.cache(reader, 1000);
+    }
+  }
 
     @Test
     public void cacheTest() throws Exception {
